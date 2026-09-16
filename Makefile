@@ -3,7 +3,7 @@ PROJECT_NAME := firmware
 # Fix for git safe.bareRepository=explicit in some environments
 export GIT_CONFIG_COUNT=0
 
-.PHONY: all clean fullclean flash monitor menuconfig help tidbyt-gen1 tidbyt-gen1_swap tidbyt-gen2 tidbyt-gen1-patched tidbyt-gen1_swap-patched tidbyt-gen2-patched tronbyt-s3 tronbyt-s3-wide pixoticker matrixportal-s3 matrixportal-s3-square matrixportal-s3-wide matrixportal-s3-waveshare waveshare-s3
+.PHONY: all clean fullclean flash monitor menuconfig help tidbyt-gen1 tidbyt-gen1_swap tidbyt-gen2 tidbyt-gen1-patched tidbyt-gen1_swap-patched tidbyt-gen2-patched tronbyt-s3 tronbyt-s3-wide pixoticker clockwise hubclock matrixportal-s3 matrixportal-s3-square matrixportal-s3-wide matrixportal-s3-waveshare waveshare-s3
 
 help:
 	@echo "Tronbyt Firmware Build System"
@@ -23,6 +23,8 @@ help:
 	@echo "  tronbyt-s3               Build for Tronbyt S3"
 	@echo "  tronbyt-s3-wide          Build for Tronbyt S3 Wide"
 	@echo "  pixoticker               Build for Pixoticker"
+	@echo "  clockwise                Build for Clockwise HUBClock (ESP32-WROOM-32, 64x32)"
+	@echo "  hubclock                 Alias for clockwise"
 	@echo "  matrixportal-s3          Build for MatrixPortal S3"
 	@echo "  matrixportal-s3-square   Build for MatrixPortal S3 (64x64 panel)"
 	@echo "  matrixportal-s3-wide     Build for MatrixPortal S3 (128x64 panel)"
@@ -97,6 +99,11 @@ tronbyt-s3-wide:
 
 pixoticker:
 	$(call build_device,esp32,sdkconfig.defaults.pixoticker)
+
+clockwise:
+	$(call build_device,esp32,sdkconfig.defaults.clockwise)
+
+hubclock: clockwise
 
 matrixportal-s3:
 	$(call build_device,esp32s3,sdkconfig.defaults.matrixportal-s3)

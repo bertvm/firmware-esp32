@@ -186,6 +186,9 @@ menu "Application Configuration"
         config BOARD_PIXOTICKER
             bool "Pixoticker"
 
+        config BOARD_CLOCKWISE
+            bool "Clockwise HUBClock (ESP32-WROOM-32, 64x32)"
+
         config BOARD_MATRIXPORTAL_S3
             bool "MatrixPortal S3"
 

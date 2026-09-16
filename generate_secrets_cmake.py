@@ -65,14 +65,14 @@ def generate_cmake_secrets(output_path):
             with open(secrets_file, "r") as f:
                 config = json.load(f)
         except (json.JSONDecodeError, FileNotFoundError) as e:
-            print(f"Warning: Could not load or parse secrets.json: {e}")
+            print("Warning: Could not load or parse secrets.json: {}".format(e))
     elif os.path.exists(placeholders_file):
         try:
             with open(placeholders_file, "r") as f:
                 config = json.load(f)
-            print(f"Note: Using fallback secrets from {placeholders_file}")
+            print("Note: Using fallback secrets from {}".format(placeholders_file))
         except (json.JSONDecodeError, FileNotFoundError) as e:
-            print(f"Warning: Could not load or parse {placeholders_file}: {e}")
+            print("Warning: Could not load or parse {}: {}".format(placeholders_file, e))
 
     cmake_content = "# Generated secrets overrides\n"
 

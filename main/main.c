@@ -529,7 +529,11 @@ static void websocket_event_handler(void* handler_args, esp_event_base_t base,
           break;
         }
 
+#ifdef CONFIG_SPIRAM
         uint8_t* new_buf = heap_caps_realloc(webp, new_size, MALLOC_CAP_SPIRAM);
+#else
+        uint8_t* new_buf = heap_caps_realloc(webp, new_size, MALLOC_CAP_8BIT);
+#endif
         if (new_buf == NULL) {
           ESP_LOGE(TAG, "Failed to allocate memory (%zu bytes)", new_size);
           if (webp) {

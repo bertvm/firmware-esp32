@@ -611,7 +611,11 @@ static void url_decode(char *str) {
 static esp_err_t save_handler(httpd_req_t *req) {
   ESP_LOGI(TAG, "Processing form submission");
 
+#ifdef CONFIG_SPIRAM
   char *buf = heap_caps_malloc(4096, MALLOC_CAP_SPIRAM);
+#else
+  char *buf = heap_caps_malloc(4096, MALLOC_CAP_8BIT);
+#endif
   if (buf == NULL) {
     ESP_LOGE(TAG, "Failed to allocate memory for form data");
     httpd_resp_send_err(req, HTTPD_500_INTERNAL_SERVER_ERROR, "Server Error");
@@ -777,7 +781,11 @@ static esp_err_t save_handler(httpd_req_t *req) {
 static esp_err_t update_handler(httpd_req_t *req) {
   esp_ota_handle_t update_handle = 0;
   const esp_partition_t *update_partition = NULL;
+#ifdef CONFIG_SPIRAM
   char *buf = heap_caps_malloc(OTA_BUFFER_SIZE, MALLOC_CAP_SPIRAM);
+#else
+  char *buf = heap_caps_malloc(OTA_BUFFER_SIZE, MALLOC_CAP_8BIT);
+#endif
   if (buf == NULL) {
     httpd_resp_send_err(req, HTTPD_500_INTERNAL_SERVER_ERROR, "Alloc failed");
     return ESP_FAIL;

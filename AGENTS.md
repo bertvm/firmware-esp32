@@ -41,6 +41,7 @@ To build for a specific board, use the provided `sdkconfig.defaults.<board>` fil
     make tidbyt-gen1
     make tidbyt-gen2
     make tronbyt-s3
+    make clockwise
     ```
 
 -   **Using idf.py directly**:

@@ -51,7 +51,12 @@ make tidbyt-gen2
 
 # For Tronbyt S3
 make tronbyt-s3
+
+# For Clockwise / HUBClock (ESP32-WROOM-32, 64x32 HUB75)
+make clockwise
 ```
+
+Clockwise/HUBClock uses the DMA library WROOM-32 pinout (E on GPIO 18). Do not flash a Tidbyt Gen1 binary onto this board. In Tronbyt Server, add the device as **Tidbyt Gen 1** (64×32) so apps render at the panel size, then set `REMOTE_URL` to `http://<server>:8000/<device_id>/next`. Typical Clockwise hardware is 4 MB flash with no PSRAM.
 
 To flash the built firmware to your device:
 

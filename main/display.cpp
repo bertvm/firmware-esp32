@@ -78,6 +78,25 @@
 #define LAT 26
 #define OE 25
 
+#elif CONFIG_BOARD_CLOCKWISE
+// jnthas/clockwise on ESP32-WROOM-32 (WiseShield-32 / jumper wiring).
+// Library DMA defaults. 64x32 (32-row) HUB75; E stays on GPIO 18 if wired.
+#define R1 25
+#define G1 26
+#define BL1 27
+#define R2 14
+#define G2 12
+#define BL2 13
+#define CH_A 23
+#define CH_B 19
+#define CH_C 5
+#define CH_D 17
+#define CH_E 18
+#define LAT 4
+#define OE 15
+#define CLK 16
+#define HEIGHT 32
+
 #elif CONFIG_BOARD_WAVESHARE_S3
 #define R1 4
 #define G1 5
@@ -207,7 +226,7 @@ int display_initialize(void) {
 
   // Apply board-specific color swap
   if (swap_colors) {
-#if CONFIG_BOARD_MATRIXPORTAL_S3 || CONFIG_BOARD_MATRIXPORTAL_S3_WIDE || CONFIG_BOARD_TRONBYT_S3
+#if CONFIG_BOARD_MATRIXPORTAL_S3 || CONFIG_BOARD_MATRIXPORTAL_S3_WIDE || CONFIG_BOARD_TRONBYT_S3 || CONFIG_BOARD_CLOCKWISE
     // Swap green and blue channels
     int8_t tmp = pin_G1; pin_G1 = pin_BL1; pin_BL1 = tmp;
     tmp = pin_G2; pin_G2 = pin_BL2; pin_BL2 = tmp;
@@ -232,16 +251,27 @@ int display_initialize(void) {
   bool invert_clock_phase = true;
 #endif
 
-  HUB75_I2S_CFG mxconfig(WIDTH,                   // width
-                         HEIGHT,                  // height
-                         1,                       // chain length
-                         pins,                    // pin mapping
-                         HUB75_I2S_CFG::FM6126A,  // driver chip
-                         HUB75_I2S_CFG::TYPE138,  // line driver
-                         true,                    // double-buffering
-                         HUB75_I2S_CFG::HZ_10M,   // clock speed
-                         1,                       // latch blanking
-                         invert_clock_phase       // invert clock phase
+#if CONFIG_BOARD_CLOCKWISE
+  // Match jnthas/clockwise: SHIFTREG, 8 MHz, no DMA double-buffer (WROOM SRAM).
+  HUB75_I2S_CFG::shift_driver driver = HUB75_I2S_CFG::SHIFTREG;
+  HUB75_I2S_CFG::clk_speed i2sspeed = HUB75_I2S_CFG::HZ_8M;
+  bool double_buff = false;
+#else
+  HUB75_I2S_CFG::shift_driver driver = HUB75_I2S_CFG::FM6126A;
+  HUB75_I2S_CFG::clk_speed i2sspeed = HUB75_I2S_CFG::HZ_10M;
+  bool double_buff = true;
+#endif
+
+  HUB75_I2S_CFG mxconfig(WIDTH,                  // width
+                         HEIGHT,                 // height
+                         1,                      // chain length
+                         pins,                   // pin mapping
+                         driver,                 // driver chip
+                         HUB75_I2S_CFG::TYPE138, // line driver
+                         double_buff,            // double-buffering
+                         i2sspeed,               // clock speed
+                         1,                      // latch blanking
+                         invert_clock_phase      // invert clock phase
   );
 
   _matrix = new MatrixPanel_I2S_DMA(mxconfig);

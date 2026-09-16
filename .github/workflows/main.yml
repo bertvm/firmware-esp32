@@ -28,6 +28,7 @@ jobs:
           - tronbyt-s3
           - tronbyt-s3-wide
           - pixoticker
+          - clockwise
           - matrixportal-s3
           - matrixportal-s3-square
           - matrixportal-s3-wide

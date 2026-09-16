@@ -252,11 +252,11 @@ esp_err_t nvs_settings_init(void) {
 
   // Check hardcoded defaults if NVS didn't provide credentials
   bool save_defaults = false;
-  if (strlen(s_wifi_ssid) == 0) {
-    char placeholder_ssid[MAX_SSID_LEN + 1] = WIFI_SSID;
-    char placeholder_password[MAX_PASSWORD_LEN + 1] = WIFI_PASSWORD;
-    char placeholder_url[MAX_URL_LEN + 1] = REMOTE_URL;
+  char placeholder_ssid[MAX_SSID_LEN + 1] = WIFI_SSID;
+  char placeholder_password[MAX_PASSWORD_LEN + 1] = WIFI_PASSWORD;
+  char placeholder_url[MAX_URL_LEN + 1] = REMOTE_URL;
 
+  if (strlen(s_wifi_ssid) == 0) {
     if (strstr(placeholder_ssid, "Xplaceholder") == NULL &&
         strlen(placeholder_ssid) > 0) {
       strncpy(s_wifi_ssid, placeholder_ssid, MAX_SSID_LEN);
@@ -270,16 +270,19 @@ esp_err_t nvs_settings_init(void) {
       }
       save_defaults = true;
     }
-
-    // Also check URL
-    if (strlen(s_image_url) == 0 &&
-        strstr(placeholder_url, "Xplaceholder") == NULL &&
-        strlen(placeholder_url) > 0) {
-      nvs_set_image_url(placeholder_url);
-    }
   }
 
-  if (save_defaults && strlen(s_wifi_ssid) > 0 && strlen(s_wifi_password) > 0) {
+  // Apply compile-time URL even if WiFi was already stored in NVS (common
+  // after a previous AP-portal or placeholder flash).
+  if ((strlen(s_image_url) == 0 ||
+       strstr(s_image_url, "Xplaceholder") != NULL) &&
+      strstr(placeholder_url, "Xplaceholder") == NULL &&
+      strlen(placeholder_url) > 0) {
+    nvs_set_image_url(placeholder_url);
+    save_defaults = true;
+  }
+
+  if (save_defaults) {
     nvs_save_settings();
   }
 
